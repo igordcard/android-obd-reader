@@ -29,6 +29,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -40,7 +41,10 @@ import eu.lighthouselabs.obd.commands.fuel.FuelEconomyObdCommand;
 import eu.lighthouselabs.obd.commands.fuel.FuelEconomyWithMAFObdCommand;
 import eu.lighthouselabs.obd.commands.fuel.FuelLevelObdCommand;
 import eu.lighthouselabs.obd.commands.fuel.FuelTrimObdCommand;
+import eu.lighthouselabs.obd.commands.pressure.PressureObdCommand;
+import eu.lighthouselabs.obd.commands.temperature.AirIntakeTemperatureObdCommand;
 import eu.lighthouselabs.obd.commands.temperature.AmbientAirTemperatureObdCommand;
+import eu.lighthouselabs.obd.commands.temperature.TemperatureObdCommand;
 import eu.lighthouselabs.obd.enums.AvailableCommandNames;
 import eu.lighthouselabs.obd.enums.FuelTrim;
 import eu.lighthouselabs.obd.enums.FuelType;
@@ -88,86 +92,57 @@ public class MainActivity extends Activity {
 
 	private boolean preRequisites = true;
 
-	private int speed = 1;
-	private double maf = 1;
-	private float ltft = 0;
+	private int speedValue = 1;
+	private double mafValue = 1;
+	private float fuelTrimValue = 0;
 	private double equivRatio = 1;
-
-	private final SensorEventListener orientListener = new SensorEventListener() {
-		public void onSensorChanged(SensorEvent event) {
-			float x = event.values[0];
-			String dir = "";
-			if (x >= 337.5 || x < 22.5) {
-				dir = "N";
-			} else if (x >= 22.5 && x < 67.5) {
-				dir = "NE";
-			} else if (x >= 67.5 && x < 112.5) {
-				dir = "E";
-			} else if (x >= 112.5 && x < 157.5) {
-				dir = "SE";
-			} else if (x >= 157.5 && x < 202.5) {
-				dir = "S";
-			} else if (x >= 202.5 && x < 247.5) {
-				dir = "SW";
-			} else if (x >= 247.5 && x < 292.5) {
-				dir = "W";
-			} else if (x >= 292.5 && x < 337.5) {
-				dir = "NW";
-			}
-			TextView compass = (TextView) findViewById(R.id.compass_text);
-			updateTextView(compass, dir);
-		}
-
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-			// TODO Auto-generated method stub
-		}
-	};
-
-	public void updateTextView(final TextView view, final String txt) {
-		new Handler().post(new Runnable() {
-			public void run() {
-				view.setText(txt);
-			}
-		});
-	}
+	private float mafPressureValue = 0;
+	private float intakeTempValue = 0;
+	private Context ctx;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		/*
-		 * TODO clean-up this upload thing
-		 * 
-		 * ExceptionHandler.register(this,
-		 * "http://www.whidbeycleaning.com/droid/server.php");
-		 */
-		setContentView(R.layout.main);
+		setContentView(R.layout.display);
+		ctx = this;
 
 		mListener = new IPostListener() {
 			public void stateUpdate(ObdCommandJob job) {
-				String cmdName = job.getCommand().getName();
-				String cmdResult = job.getCommand().getFormattedResult();
-
-				Log.d(TAG, FuelTrim.LONG_TERM_BANK_1.getBank() + " equals " + cmdName + "?");
-
+				final String cmdName = job.getCommand().getName();
+				final String cmdResult = job.getCommand().getFormattedResult();
+				
 				if (AvailableCommandNames.ENGINE_RPM.getValue().equals(cmdName)) {
-					TextView tvRpm = (TextView) findViewById(R.id.rpm_text);
-					tvRpm.setText(cmdResult);
-				} else if (AvailableCommandNames.SPEED.getValue().equals(cmdName)) {
-					TextView tvSpeed = (TextView) findViewById(R.id.spd_text);
-					tvSpeed.setText(cmdResult);
-					speed = ((SpeedObdCommand) job.getCommand()).getMetricSpeed();
-				} else if (AvailableCommandNames.MAF.getValue().equals(cmdName)) {
-					maf = ((MassAirFlowObdCommand) job.getCommand()).getMAF();
-					addTableRow(cmdName, cmdResult);
-				} else if (FuelTrim.LONG_TERM_BANK_1.getBank().equals(cmdName)) {
-					ltft = ((FuelTrimObdCommand) job.getCommand()).getValue();
-				} else if (AvailableCommandNames.EQUIV_RATIO.getValue().equals(cmdName)) {
-					equivRatio = ((CommandEquivRatioObdCommand) job.getCommand()).getRatio();
-					addTableRow(cmdName, cmdResult);
-				} else {
-					addTableRow(cmdName, cmdResult);
+					updateTextView(R.id.rpm_text, cmdResult);
 				}
+
+//				AvailableCommandNames commandNames = AvailableCommandNames.valueOf(cmdName);
+//
+//				switch (commandNames) {
+//				case ENGINE_RPM:
+//					updateTextView(R.id.rpm_text, cmdResult);
+//					break;
+//				case SPEED:
+//					updateTextView(R.id.spd_text, cmdResult);
+//					speedValue = ((SpeedObdCommand) job.getCommand()).getMetricSpeed();
+//					break;
+//				case MAF:
+//					mafValue = ((MassAirFlowObdCommand) job.getCommand()).getMAF();
+//					// addTableRow(cmdName, cmdResult);
+//					break;
+//				case AIR_INTAKE_TEMP:
+//					intakeTempValue = ((TemperatureObdCommand) job.getCommand()).getTemperature();
+//					updateTextView(R.id.air_intake_temp_text, Float.toString(intakeTempValue));
+//					break;
+//				case INTAKE_MANIFOLD_PRESSURE:
+//					mafPressureValue = ((PressureObdCommand) job.getCommand()).getMetricUnit();
+//					updateTextView(R.id.maf_pressure_text, Float.toString(mafPressureValue));
+//
+//					break;
+//				default:
+//					// addTableRow(cmdName, cmdResult);
+//					break;
+//
+//				}
 			}
 		};
 
@@ -258,7 +233,6 @@ public class MainActivity extends Activity {
 
 		Log.d(TAG, "Resuming..");
 
-		sensorManager.registerListener(orientListener, orientSensor, SensorManager.SENSOR_DELAY_UI);
 		prefs = PreferenceManager.getDefaultSharedPreferences(this);
 		powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wakeLock = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "ObdReader");
@@ -293,6 +267,19 @@ public class MainActivity extends Activity {
 			// return true;
 		}
 		return false;
+	}
+
+	public void updateTextView(final TextView view, final String txt) {
+		new Handler().post(new Runnable() {
+			public void run() {
+				view.setText(txt);
+			}
+		});
+	}
+
+	private void updateTextView(int id, String val) {
+		TextView tv = (TextView) findViewById(id);
+		tv.setText(val);
 	}
 
 	// private void staticCommand() {
@@ -410,13 +397,11 @@ public class MainActivity extends Activity {
 			/*
 			 * If values are not default, then we have values to calculate MPG
 			 */
-			Log.d(TAG, "SPD:" + speed + ", MAF:" + maf + ", LTFT:" + ltft);
-			if (speed > 1 && maf > 1 && ltft != 0) {
-				FuelEconomyWithMAFObdCommand fuelEconCmd = new FuelEconomyWithMAFObdCommand(FuelType.DIESEL, speed,
-						maf, ltft, false /* TODO */);
-				TextView tvMpg = (TextView) findViewById(R.id.fuel_econ_text);
+			Log.d(TAG, "SPD:" + speedValue + ", MAF:" + mafValue + ", LTFT:" + fuelTrimValue);
+			if (speedValue > 1 && mafValue > 1 && fuelTrimValue != 0) {
+				FuelEconomyWithMAFObdCommand fuelEconCmd = new FuelEconomyWithMAFObdCommand(FuelType.DIESEL,
+						speedValue, mafValue, fuelTrimValue, false /* TODO */);
 				String liters100km = String.format("%.2f", fuelEconCmd.getLitersPer100Km());
-				tvMpg.setText("" + liters100km);
 				Log.d(TAG, "FUELECON:" + liters100km);
 			}
 
@@ -437,6 +422,7 @@ public class MainActivity extends Activity {
 		final ObdCommandJob fuelEcon = new ObdCommandJob(new FuelEconomyObdCommand());
 		final ObdCommandJob rpm = new ObdCommandJob(new EngineRPMObdCommand());
 		final ObdCommandJob maf = new ObdCommandJob(new MassAirFlowObdCommand());
+		final ObdCommandJob temp = new ObdCommandJob(new AirIntakeTemperatureObdCommand());
 		final ObdCommandJob fuelLevel = new ObdCommandJob(new FuelLevelObdCommand());
 		final ObdCommandJob ltft1 = new ObdCommandJob(new FuelTrimObdCommand(FuelTrim.LONG_TERM_BANK_1));
 		final ObdCommandJob ltft2 = new ObdCommandJob(new FuelTrimObdCommand(FuelTrim.LONG_TERM_BANK_2));
