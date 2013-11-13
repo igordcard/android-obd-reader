@@ -100,6 +100,8 @@ public class MainActivity extends Activity {
 	private float intakeTempValue = 0;
 	private Context ctx;
 
+	private static final String LOG_TAG = "MAIN_ACT";
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -108,41 +110,25 @@ public class MainActivity extends Activity {
 
 		mListener = new IPostListener() {
 			public void stateUpdate(ObdCommandJob job) {
+				Log.i(LOG_TAG, "stateupdate");
 				final String cmdName = job.getCommand().getName();
 				final String cmdResult = job.getCommand().getFormattedResult();
-				
+
 				if (AvailableCommandNames.ENGINE_RPM.getValue().equals(cmdName)) {
 					updateTextView(R.id.rpm_text, cmdResult);
-				}
+				} else if (AvailableCommandNames.SPEED.getValue().equals(cmdName)) {
+					updateTextView(R.id.spd_text, cmdResult);
+				} else if (AvailableCommandNames.MAF.getValue().equals(cmdName)) {
+					// addTableRow(cmdName, cmdResult);
+				} else if (AvailableCommandNames.AIR_INTAKE_TEMP.getValue().equals(cmdName)) {
+					intakeTempValue = ((TemperatureObdCommand) job.getCommand()).getTemperature();
+					updateTextView(R.id.air_intake_temp_text, Float.toString(intakeTempValue));
+				} else if (AvailableCommandNames.INTAKE_MANIFOLD_PRESSURE.getValue().equals(cmdName)) {
+					mafPressureValue = ((PressureObdCommand) job.getCommand()).getMetricUnit();
+					updateTextView(R.id.maf_pressure_text, Float.toString(mafPressureValue));
+				} else {
 
-//				AvailableCommandNames commandNames = AvailableCommandNames.valueOf(cmdName);
-//
-//				switch (commandNames) {
-//				case ENGINE_RPM:
-//					updateTextView(R.id.rpm_text, cmdResult);
-//					break;
-//				case SPEED:
-//					updateTextView(R.id.spd_text, cmdResult);
-//					speedValue = ((SpeedObdCommand) job.getCommand()).getMetricSpeed();
-//					break;
-//				case MAF:
-//					mafValue = ((MassAirFlowObdCommand) job.getCommand()).getMAF();
-//					// addTableRow(cmdName, cmdResult);
-//					break;
-//				case AIR_INTAKE_TEMP:
-//					intakeTempValue = ((TemperatureObdCommand) job.getCommand()).getTemperature();
-//					updateTextView(R.id.air_intake_temp_text, Float.toString(intakeTempValue));
-//					break;
-//				case INTAKE_MANIFOLD_PRESSURE:
-//					mafPressureValue = ((PressureObdCommand) job.getCommand()).getMetricUnit();
-//					updateTextView(R.id.maf_pressure_text, Float.toString(mafPressureValue));
-//
-//					break;
-//				default:
-//					// addTableRow(cmdName, cmdResult);
-//					break;
-//
-//				}
+				}
 			}
 		};
 

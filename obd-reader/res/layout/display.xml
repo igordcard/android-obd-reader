@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <LinearLayout
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
@@ -12,19 +12,24 @@
             android:id="@+id/air_temp_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="10sp"
+            android:layout_weight="1"
+            android:gravity="left"
             android:text="air temp: "
-            android:textSize="35sp" />
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/air_temp_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10sp"
+            android:layout_weight="1"
+            android:gravity="right"
             android:text="val"
-            android:textSize="35sp" />
-    </LinearLayout>
+            android:textSize="36sp" />
+    </TableRow>
 
-    <LinearLayout
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
@@ -32,19 +37,23 @@
             android:id="@+id/rpm_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="10sp"
+            android:layout_weight="1"
             android:text="rpm: "
-            android:textSize="35sp" />
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/rpm_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10sp"
+            android:layout_weight="1"
+            android:gravity="right"
             android:text="val"
-            android:textSize="35sp" />
-    </LinearLayout>
+            android:textSize="36sp" />
+    </TableRow>
 
-    <LinearLayout
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
@@ -52,19 +61,23 @@
             android:id="@+id/spd_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="10sp"
+            android:layout_weight="1"
             android:text="speed: "
-            android:textSize="35sp" />
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/spd_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10sp"
+            android:layout_weight="1"
+            android:gravity="right"
             android:text="val"
-            android:textSize="35sp" />
-    </LinearLayout>
+            android:textSize="36sp" />
+    </TableRow>
 
-    <LinearLayout
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
@@ -72,19 +85,23 @@
             android:id="@+id/air_intake_temp_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="10sp"
+            android:layout_weight="1"
             android:text="intake t: "
-            android:textSize="35sp" />
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/air_intake_temp_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10sp"
+            android:layout_weight="1"
+            android:gravity="right"
             android:text="val"
-            android:textSize="35sp" />
-    </LinearLayout>
+            android:textSize="36sp" />
+    </TableRow>
 
-    <LinearLayout
+    <TableRow
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
@@ -92,16 +109,20 @@
             android:id="@+id/maf_pressure_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_marginLeft="10sp"
+            android:layout_weight="1"
             android:text="MAF press: "
-            android:textSize="35sp" />
+            android:textSize="36sp" />
 
         <TextView
             android:id="@+id/maf_pressure_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginRight="10sp"
+            android:layout_weight="1"
+            android:gravity="right"
             android:text="val"
-            android:textSize="35sp" />
-    </LinearLayout>
+            android:textSize="36sp" />
+    </TableRow>
 
-</LinearLayout>
+</TableLayout>
